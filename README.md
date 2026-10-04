@@ -22,25 +22,27 @@
 
 ## 安装
 
+**桌面版应用**：打开**「添加插件」**，安装源选 **npm 官方源**，填 `@xiaotuchu/dsh-theme-eye-care`，安装。装完按提示重启一次。
+
+**命令行**（`web` / headless 等 profile；桌面版命令行则把 `web` 换成 `desktop`）：
+
 **从 npm**
 
 ```powershell
-dsh plugin --profile desktop add "@xiaotuchu/dsh-theme-eye-care"
+dsh plugin --profile web add "@xiaotuchu/dsh-theme-eye-care"
 ```
 
 **从 GitHub**
 
 ```powershell
-dsh plugin --profile desktop add "git+https://github.com/xiaotuchu/dsh-theme-eye-care.git"
+dsh plugin --profile web add "git+https://github.com/xiaotuchu/dsh-theme-eye-care.git"
 ```
 
 **从本地目录**
 
 ```powershell
-dsh plugin --profile desktop add "C:\path\to\dsh-theme-eye-care"
+dsh plugin --profile web add "C:\path\to\dsh-theme-eye-care"
 ```
-
-把 `desktop` 换成 `web` 也可以。
 
 装完**需要重启一次 DSH**，之后切换配色就不用再重启了。
 
@@ -72,7 +74,7 @@ dsh plugin --profile desktop add "C:\path\to\dsh-theme-eye-care"
 ## 卸载
 
 ```powershell
-dsh plugin --profile desktop remove @xiaotuchu/dsh-theme-eye-care
+dsh plugin --profile web remove @xiaotuchu/dsh-theme-eye-care
 ```
 
 本插件不改动 DSH 自带的任何文件。卸载后界面立刻回到你原本的主题。

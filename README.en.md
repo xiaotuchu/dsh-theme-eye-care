@@ -23,25 +23,28 @@ base and dark borders.
 
 ## Install
 
+**Desktop app**: open **Add plugin**, pick the **npm registry** as the source, enter
+`@xiaotuchu/dsh-theme-eye-care`, and install. Restart once when it asks.
+
+**Command line** (`web` / headless profiles; on the Desktop app use `desktop` instead of `web`):
+
 **From npm**
 
 ```powershell
-dsh plugin --profile desktop add "@xiaotuchu/dsh-theme-eye-care"
+dsh plugin --profile web add "@xiaotuchu/dsh-theme-eye-care"
 ```
 
 **From GitHub**
 
 ```powershell
-dsh plugin --profile desktop add "git+https://github.com/xiaotuchu/dsh-theme-eye-care.git"
+dsh plugin --profile web add "git+https://github.com/xiaotuchu/dsh-theme-eye-care.git"
 ```
 
 **From a local directory**
 
 ```powershell
-dsh plugin --profile desktop add "C:\path\to\dsh-theme-eye-care"
+dsh plugin --profile web add "C:\path\to\dsh-theme-eye-care"
 ```
-
-Use `web` instead of `desktop` if that is your profile.
 
 **Restart DSH once** after installing. After that, switching palettes needs no restart.
 
@@ -75,7 +78,7 @@ secondary ≥5.5, tertiary ≥4.5, caption ≥2.5, link ≥4.5.
 ## Uninstall
 
 ```powershell
-dsh plugin --profile desktop remove @xiaotuchu/dsh-theme-eye-care
+dsh plugin --profile web remove @xiaotuchu/dsh-theme-eye-care
 ```
 
 This plugin never touches a file that ships with DSH. Uninstalling puts your original theme
