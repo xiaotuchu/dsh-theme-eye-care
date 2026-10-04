@@ -1,0 +1,5 @@
+# Keep every text file LF in the repository so the published npm tarball and
+# clones on any platform get identical bytes.
+* text=auto eol=lf
+*.png binary
+*.ico binary

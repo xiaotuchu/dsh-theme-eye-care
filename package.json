@@ -1,0 +1,71 @@
+{
+  "name": "@xiaotuchu/dsh-theme-eye-care",
+  "version": "2.0.0",
+  "description": "护眼配色 Eye-care palettes — three switchable low-glare themes (warm paper, eye green, warm grey) for the DeepSeek Harness web GUI, each a full alias-token layer with a light and a dark face.",
+  "license": "MIT",
+  "author": "Xiaotu",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./themes/warm-paper.json": "./themes/warm-paper.json",
+    "./themes/eye-green.json": "./themes/eye-green.json",
+    "./themes/warm-grey.json": "./themes/warm-grey.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "themes",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "preview.png"
+  ],
+  "scripts": {
+    "build": "node scripts/build-client.js",
+    "check": "node scripts/check-theme.js",
+    "preview": "python scripts/render-preview.py preview.png",
+    "test": "node scripts/check-theme.js && node scripts/test-client-contract.js"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "theme",
+    "palette",
+    "eye-care",
+    "dsh-plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiaotuchu/dsh-theme-eye-care.git"
+  },
+  "homepage": "https://github.com/xiaotuchu/dsh-theme-eye-care#readme",
+  "bugs": {
+    "url": "https://github.com/xiaotuchu/dsh-theme-eye-care/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-theme"
+      ],
+      "platform": "web"
+    },
+    "compatibility": {
+      "dsh": ">=0.1.7-rc.1",
+      "profiles": [
+        "web",
+        "desktop"
+      ]
+    }
+  }
+}
