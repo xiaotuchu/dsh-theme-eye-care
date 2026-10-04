@@ -1,6 +1,6 @@
 {
   "name": "@xiaotuchu/dsh-theme-eye-care",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "护眼配色 Eye-care palettes — three switchable low-glare themes (warm paper, eye green, warm grey) for the DeepSeek Harness web GUI, each a full alias-token layer with a light and a dark face.",
   "license": "MIT",
   "author": "Xiaotu",
@@ -12,9 +12,7 @@
   "exports": {
     ".": "./lib/index.js",
     "./client": "./lib/client.js",
-    "./themes/warm-paper.json": "./themes/warm-paper.json",
-    "./themes/eye-green.json": "./themes/eye-green.json",
-    "./themes/warm-grey.json": "./themes/warm-grey.json",
+    "./themes/*": "./themes/*",
     "./package.json": "./package.json"
   },
   "files": [
@@ -22,14 +20,19 @@
     "themes",
     "cordis.patch.yml",
     "README.md",
+    "README.en.md",
     "LICENSE",
-    "preview.png"
+    "preview.png",
+    "preview-en.png"
   ],
   "scripts": {
-    "build": "node scripts/build-client.js",
-    "check": "node scripts/check-theme.js",
-    "preview": "python scripts/render-preview.py preview.png",
-    "test": "node scripts/check-theme.js && node scripts/test-client-contract.js"
+    "build": "node src/build.js",
+    "check": "node src/build.js --check",
+    "test": "node test/run.js",
+    "test:install": "node test/install.test.js",
+    "index": "node tools/palette-index.js",
+    "preview": "python tools/render-preview.py preview.png",
+    "preview:en": "python tools/render-preview.py preview-en.png --lang en"
   },
   "keywords": [
     "dsh",
@@ -61,7 +64,7 @@
       "platform": "web"
     },
     "compatibility": {
-      "dsh": ">=0.1.7-rc.1",
+      "dsh": ">=0.2.0-rc.2",
       "profiles": [
         "web",
         "desktop"

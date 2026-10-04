@@ -1,0 +1,8 @@
+.dshEyeCare_group{border-bottom:.5px solid var(--dsw-alias-border-l2);flex-direction:column;gap:8px;padding:16px 0;display:flex}
+.dshEyeCare_title{color:var(--dsw-alias-label-primary);font-size:14px;font-weight:400;line-height:22px}
+.dshEyeCare_cubeRow{flex-wrap:wrap;align-items:stretch;gap:8px;display:flex}
+.dshEyeCare_cube{box-sizing:border-box;border:.5px solid var(--dsw-alias-border-l4);border-radius:var(--dsw-radius-xl);font:inherit;color:var(--dsw-alias-label-primary);cursor:pointer;background:0 0;flex-direction:column;flex:1 1 0;min-width:88px;justify-content:center;align-items:center;gap:4px;padding:20px 12px;font-size:14px;line-height:22px;display:flex}
+.dshEyeCare_cube:hover:not(.dshEyeCare_selected){background:var(--dsw-alias-interactive-bg-hover)}
+.dshEyeCare_selected{background:var(--dsw-alias-bg-module-platform);border-color:var(--dsw-static-neutral-bluish-400)}
+.dshEyeCare_swatch{box-sizing:border-box;flex:none;width:20px;height:20px;border-radius:4px;border:1px solid var(--dsw-alias-border-l3)}
+.dshEyeCare_swatchNone{background:0 0;border-style:dashed;border-color:var(--dsw-alias-border-l4)}

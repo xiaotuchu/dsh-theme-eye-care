@@ -1,10 +1,11 @@
-// Verify an installed Warm Paper plugin WITHOUT restarting DSH: compose the
-// profile's patch layers with DSH's own `dsh-app-boot` code and assert the
-// theme row mounts and its client bundle is served under the package name.
+// Verify an installed Eye-care palettes plugin WITHOUT restarting DSH: compose the
+// profile's patch layers with DSH's own `dsh-app-boot` code and assert the theme row
+// mounts and its client bundle is served under the package name.
 //
-// Run it with the harness binary acting as node (asar-aware fs is required):
+// Not part of `node test/run.js`: it needs a local DSH install. Run it with the
+// harness binary acting as node (asar-aware fs is required):
 //   $env:ELECTRON_RUN_AS_NODE=1
-//   & "<install>\DeepSeek Harness.exe" --expose-internals scripts/verify-install.mjs
+//   & "<install>\DeepSeek Harness.exe" test/install.test.js
 //
 // Overrides: --profile-dir <path>  --asar <path-to-dsh/node_modules>
 import { readFileSync } from 'node:fs';
@@ -49,6 +50,9 @@ check('installed package resolves through the profile node_modules', installed.n
 check('declares dsh.client.platform === "web"', installed.dsh?.client?.platform === 'web', installed.dsh?.client?.platform);
 check('declares dsh.bundle.patch', typeof installed.dsh?.bundle?.patch === 'string', JSON.stringify(installed.dsh?.bundle));
 check('exports a ./client subpath', typeof installed.exports?.['./client'] === 'string', installed.exports?.['./client']);
+check('declares the theme service as a client dependency',
+  (installed.dsh?.client?.inject ?? []).includes('@deepseek-ai/dsh-client-ui-theme'),
+  JSON.stringify(installed.dsh?.client?.inject));
 
 // 3. the bundle patch parses, with no skipped-patch diagnostics
 const patchFiles = boot.bundlePatchPaths(join(profileDir, 'node_modules', name), installed.dsh.bundle);
@@ -57,9 +61,9 @@ const patches = patchFiles.flatMap((file) => boot.loadOverlayPatches('dsh', file
 check('patch parses without diagnostics', patches.length === 1, JSON.stringify(patches));
 
 // 4. composing it over an empty root yields the row the Loader will mount
-// The row is mounted by its `name` (the package specifier). Its `id` is a local
-// label and deliberately a short name, so it must NOT be compared to the
-// package name — only asserted to exist and stay stable.
+// The row is mounted by its `name` (the package specifier). Its `id` is a local label
+// and deliberately a short name, so it must NOT be compared to the package name —
+// only asserted to exist and stay stable.
 const entries = boot.composeEntries([patches]);
 const row = entries.find((entry) => entry.name === name);
 check('composed entries contain a row mounting the package', row !== undefined, JSON.stringify(entries));

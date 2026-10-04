@@ -1,10 +1,21 @@
 #!/usr/bin/env python3
 """Sample the real colours out of a DSH screenshot so a 'too white' surface can be
-traced back to the token that paints it, instead of guessing."""
+traced back to the token that paints it, instead of guessing.
+
+Reference values are read from themes/warm-paper.json, never hard-coded — the last
+time they were hard-coded they still described the pre-fix palette (bg-layer-1
+#fdfbf5 instead of #f5f0e1), which is exactly the kind of drift this tool is meant
+to catch.
+"""
+import json
 import sys
 from collections import Counter
+from pathlib import Path
 
 from PIL import Image
+
+ROOT = Path(__file__).resolve().parent.parent
+THEME = ROOT / "themes" / "warm-paper.json"
 
 path = sys.argv[1]
 img = Image.open(path).convert("RGB")
@@ -28,7 +39,7 @@ probes = [
     ("permission select fill", 0.885, 0.117),
     ("font-size stepper fill", 0.885, 0.487),
     ("our row: 暖纸 button (selected)", 0.82, 0.744),
-    ("our row: 护眼绿 button (unselected)", 0.37, 0.744),
+    ("our row: 豆绿 button (unselected)", 0.37, 0.744),
     ("row separator area", 0.52, 0.652),
 ]
 print("\n== probes ==")
@@ -37,18 +48,24 @@ for label, fx, fy in probes:
     r, g, b = img.getpixel((x, y))
     print(f"  #{r:02x}{g:02x}{b:02x}  at ({x:4d},{y:4d})  {label}")
 
-# Reference values from our palettes, for eyeball matching.
-print("\n== warm-paper tokens of interest ==")
-for name, value in [
-    ("bg-base", "#f5f0e1"),
-    ("bg-layer-1", "#fdfbf5"),
-    ("bg-layer-2", "#fdfbf5"),
-    ("bg-layer-3", "#fffdf8"),
-    ("bg-overlay", "#f2eddc"),
-    ("bg-module-platform", "#e8e5d9"),
-    ("specific-menu", "#faf6eaf0"),
-    ("specific-sidebar-fill", "#e8e5d9"),
-    ("specific-input-major", "#fdfbf5"),
-    ("settings-card-fill", "var(bg-layer-2)"),
+# Reference values from the palette, for eyeball matching.
+theme = json.loads(THEME.read_text(encoding="utf-8"))
+print(f"\n== {theme['id']} tokens of interest ==")
+for name in [
+    "--dsw-alias-bg-base",
+    "--dsw-alias-bg-layer-1",
+    "--dsw-alias-bg-layer-2",
+    "--dsw-alias-bg-layer-3",
+    "--dsw-alias-bg-overlay",
+    "--dsw-alias-bg-module-platform",
+    "--dsw-specific-menu",
+    "--dsw-specific-sidebar-fill",
+    "--dsw-specific-input-major",
+    "--dsw-alias-settings-card-fill",
 ]:
-    print(f"  {value:22s} {name}")
+    pair = theme["tokens"].get(name)
+    if pair is None:
+        print(f"  {'(missing)':38s} {name}")
+        continue
+    value = pair if isinstance(pair, str) else pair["light"]
+    print(f"  {value:38s} {name}")

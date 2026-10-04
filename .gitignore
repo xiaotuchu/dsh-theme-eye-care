@@ -5,3 +5,4 @@ _install-backup/
 *.log
 .DS_Store
 Thumbs.db
+REFACTOR.md

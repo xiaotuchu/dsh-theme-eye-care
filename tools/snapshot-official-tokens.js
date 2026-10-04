@@ -1,7 +1,7 @@
-// Snapshot the official --dsw-*/--shiki-* token names out of a DSH client bundle
-// so scripts/check-theme.js can reject typos without needing app.asar at check time.
+// Snapshot the official --dsw-*/--shiki-* token names out of a DSH client bundle so
+// test/themes.test.js can reject typos without needing app.asar at test time.
 //
-// usage: node scripts/snapshot-official-tokens.js <path-to-ui-theme-client.js> [dshVersion]
+// usage: node tools/snapshot-official-tokens.js <path-to-ui-theme-client.js> [dshVersion]
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,7 +10,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const source = process.argv[2];
 const dshVersion = process.argv[3] ?? '0.2.0-rc.2';
 if (!source) {
-  console.error('usage: node scripts/snapshot-official-tokens.js <ui-theme/lib/client.js> [dshVersion]');
+  console.error('usage: node tools/snapshot-official-tokens.js <ui-theme/lib/client.js> [dshVersion]');
   process.exit(2);
 }
 
@@ -26,5 +26,6 @@ const out = {
   aliasCount: [...names].filter((n) => n.startsWith('--dsw-alias-')).length,
   names: [...names].sort()
 };
-writeFileSync(join(root, 'scripts', 'official-tokens.json'), JSON.stringify(out, null, 2) + '\n');
-console.log('snapshot written: ' + out.count + ' tokens (' + out.aliasCount + ' alias) from DSH ' + dshVersion);
+const target = join(root, 'test', 'official-tokens.json');
+writeFileSync(target, JSON.stringify(out, null, 2) + '\n');
+console.log(`snapshot written: test/official-tokens.json — ${out.count} tokens (${out.aliasCount} alias) from DSH ${dshVersion}`);
