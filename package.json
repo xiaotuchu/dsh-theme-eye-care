@@ -1,6 +1,6 @@
 {
   "name": "@xiaotuchu/dsh-theme-eye-care",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "DSH native background palettes and a standalone Island theme, with remembered settings and light/dark support.",
   "license": "MIT AND CC-BY-NC-4.0",
   "author": "Xiaotu",
@@ -61,7 +61,8 @@
     },
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-client-ui-theme"
+        "@deepseek-ai/dsh-client-ui-theme",
+        "@deepseek-ai/dsh-client-ui-primitives"
       ],
       "platform": "web"
     },

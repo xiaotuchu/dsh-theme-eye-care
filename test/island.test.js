@@ -40,6 +40,7 @@ function setup(saved = {}) {
   };
   new Function('window', 'document', bundle)(window, document);
   const plugin = registration.factory((name) => {
+    if (name === '@deepseek-ai/dsh-client-ui-primitives') return { Menu: 'host-menu', IconChevronDownOutlineRegular: 'host-chevron' };
     assert.equal(name, 'react'); return react;
   });
   let messages;
@@ -61,15 +62,15 @@ function setup(saved = {}) {
   const draw = (lang = 'zh') => { cursor = 0; return component({ t: (k) => messages[lang][k] }); };
   const text = (n) => typeof n === 'string' ? n : (n?.children ?? []).map(text).join('');
   const buttons = (n) => n?.type === 'button' ? [n] : (n?.children ?? []).flatMap(buttons);
-  const selects = (n) => n?.type === 'select' ? [n] : (n?.children ?? []).flatMap(selects);
-  const labels = (lang) => { const tree = draw(lang); return [...buttons(tree), ...selects(tree).flatMap(s => s.children)].map(text); };
+  const selects = (n) => n?.type === 'host-menu' ? [n] : (n?.children ?? []).flatMap(selects);
+  const labels = (lang) => { const tree = draw(lang); return [...buttons(tree), ...selects(tree).flatMap(s => s.props.items.map(o => ({children:[o.label]})))].map(text); };
   const click = (label) => {
     const button = buttons(draw()).find((b) => text(b) === label);
     if (button) { button.props.onClick(); return; }
     const select = selects(draw())[0];
-    const option = select?.children.find(o => text(o) === label);
+    const option = select?.props.items.find(o => o.label === label);
     assert.ok(option, `missing background option: ${label}`);
-    select.props.onChange({ target: { value: option.props.value } });
+    select.props.onSelect(option.id);
   };
   const storage = (key, value) => {
     if (value === null) store.delete(key); else store.set(key, value);

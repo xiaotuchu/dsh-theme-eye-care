@@ -96,9 +96,8 @@ body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-phase] [role=
 body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-phase] [role="tab"][aria-selected="true"]::after {
   background:#16856a;
 }
-body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_composerSeat"] {
-  background:transparent!important;
-}
+/* Preserve the host composerSeat gradient: it masks scrolled conversation
+   text behind the composer and its usage footer. */
 body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_card"]:has([contenteditable]) {
   border:1px solid rgba(196,160,105,.28);
   border-radius:26px;
@@ -153,16 +152,18 @@ body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_markdown_
   font-size:14px;
   line-height:1.7;
 }
-body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) .md-code-block {
+/* CodeBlock is also used by standalone source previews. Apply decorative
+   cards only inside Markdown, regardless of the source file's language. */
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_markdown_"] .md-code-block {
   overflow:hidden;
   border:1px solid rgba(171,151,113,.24);
   border-radius:14px;
   background:rgba(246,240,227,.86);
 }
-body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) .md-code-block [class*="_banner"] {
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_markdown_"] .md-code-block [class*="_banner"] {
   background:rgba(225,216,196,.28);
 }
-body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) .md-code-block [class*="_bannerWrap"]::before {
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_markdown_"] .md-code-block [class*="_bannerWrap"]::before {
   content:"";
   position:absolute;
   top:13px;
@@ -174,7 +175,7 @@ body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) .md-code-block [cla
   box-shadow:17px 0 #e5c370,34px 0 #88ae77;
   pointer-events:none;
 }
-body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) .md-code-block [class*="_bannerWrap"] {
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_markdown_"] .md-code-block [class*="_bannerWrap"] {
   position:relative;
   padding-left:68px;
 }
@@ -293,6 +294,12 @@ body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_frame"]:h
 body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_frame"] > [class*="_centerCol"],
 body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) :is([data-sidebar-right-panel],[data-dockkit-pane]) {
   background:transparent!important;
+}
+/* File Tree is mounted alongside the preview with its own opaque panel.
+   Reveal the shared viewport artwork here too; keep its native row states,
+   toolbar divider and resize handle. Native palettes and dark mode stay opaque. */
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) .fp-host {
+  background:transparent;
 }
 body[data-eye-care-theme="island"][data-ds-dark-theme] { --eye-island-brown:#dfc5a3; }
 body[data-eye-care-theme="island"][data-ds-dark-theme]::before,

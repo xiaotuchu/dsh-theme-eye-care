@@ -7,7 +7,6 @@
 .dshEyeCare_swatch{box-sizing:border-box;flex:none;width:20px;height:20px;border-radius:4px;border:1px solid var(--dsw-alias-border-l3)}
 .dshEyeCare_swatchNone{background:0 0;border-style:dashed;border-color:var(--dsw-alias-border-l4)}
 .dshEyeCare_background{flex-direction:row;align-items:center;justify-content:space-between;gap:16px}
-.dshEyeCare_select{box-sizing:border-box;min-width:140px;max-width:65%;height:34px;padding:0 10px;border:.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm,6px);background:var(--dsw-alias-bg-base);color:var(--dsw-alias-label-primary);font:inherit;font-size:14px;cursor:pointer;color-scheme:light}
+.dshEyeCare_select{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:space-between;gap:16px;min-width:112px;height:36px;padding:0 14px;border:0;border-radius:var(--dsw-radius-md,10px);background:var(--dsw-alias-bg-module-platform);color:var(--dsw-alias-label-primary);font:inherit;font-size:14px;line-height:22px;cursor:pointer}
 .dshEyeCare_select:hover{background:var(--dsw-alias-interactive-bg-hover)}
 .dshEyeCare_select:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:2px}
-[data-ds-dark-theme] .dshEyeCare_select{color-scheme:dark}

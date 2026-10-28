@@ -9,6 +9,7 @@
 // `window.__ModuleLoader__.load({ id, factory })`. Read this file to read what runs.
 
 const react = require("react");
+const { Menu, IconChevronDownOutlineRegular } = require("@deepseek-ai/dsh-client-ui-primitives");
 
 const OFF_ID = "dsh-default";
 const DEFAULT_ID = "warm-paper";
@@ -218,9 +219,11 @@ function AppearanceSettings(props) {
   const t = props?.t ?? ((key) => MESSAGES.zh[key] ?? key);
   const [selected, setSelected] = react.useState(readStored);
   const [skin, setSkin] = react.useState(readSkin);
+  const [menuOpen, setMenuOpen] = react.useState(false);
   react.useEffect(() => subscribe(() => {
     setSelected(selection);
     setSkin(skinSelection);
+    setMenuOpen(false);
   }), []);
 
   const options = THEMES.map((theme) => ({ id: theme.id, label: labelOf(theme.displayName), swatch: theme.swatch }));
@@ -250,14 +253,33 @@ function AppearanceSettings(props) {
       { id: NATIVE_THEME, label: t("nativeTheme"), swatch: null },
       { id: ISLAND_THEME, label: t("island"), swatch: "linear-gradient(135deg,#fbf7ed 50%,#16856a 50%)" }
     ], skin, chooseSkin, "theme"),
-    skin === NATIVE_THEME ? h("label", { className: css.group + " " + css.background, "data-eye-care-section": "background" },
+    skin === NATIVE_THEME ? h("div", { className: css.group + " " + css.background, "data-eye-care-section": "background" },
       h("span", { className: css.title }, t("title")),
-      h("select", {
-        className: css.select,
-        "aria-label": t("title"),
-        value: selected,
-        onChange: (event) => choose(event.target.value)
-      }, options.map((option) => h("option", { key: option.id, value: option.id }, option.label)))) : null);
+      h(Menu, {
+        open: menuOpen,
+        onClose: () => setMenuOpen(false),
+        items: options.map(({ id, label }) => ({ id, label })),
+        selectedId: selected,
+        onSelect: (id) => { setMenuOpen(false); choose(id); },
+        portal: true,
+        align: "end",
+        minWidthFromAnchor: true,
+        autoFocus: true,
+        anchor: h("button", {
+          type: "button",
+          className: css.select,
+          "aria-label": t("title"),
+          "aria-haspopup": "menu",
+          "aria-expanded": menuOpen,
+          onClick: () => setMenuOpen(!menuOpen),
+          onKeyDown: (event) => {
+            if (!menuOpen && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
+              event.preventDefault(); setMenuOpen(true);
+            }
+          }
+        }, options.find((option) => option.id === selected)?.label,
+          h(IconChevronDownOutlineRegular, { size: 12, "aria-hidden": true }))
+      })) : null);
 }
 
 // ---------------------------------------------------------------- plugin

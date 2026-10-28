@@ -97,6 +97,7 @@ check('registration id equals the package name', loaded?.id === pkg.name, `${loa
 const reactStub = createReactStub();
 const exportsObj = loaded.factory((specifier) => {
   if (specifier === 'react') return reactStub.react;
+  if (specifier === '@deepseek-ai/dsh-client-ui-primitives') return { Menu: 'host-menu', IconChevronDownOutlineRegular: 'host-chevron' };
   throw new Error('unexpected require: ' + specifier);
 });
 
@@ -267,8 +268,8 @@ function textOf(node) {
   if (node.children) return textOf(node.children);
   return '';
 }
-const selectOf = (tree) => tree.children.find((child) => child?.type === 'select');
-const optionsOf = (tree) => selectOf(tree)?.children ?? [];
+const selectOf = (tree) => tree.children.find((child) => child?.type === 'host-menu');
+const optionsOf = (tree) => (selectOf(tree)?.props.items ?? []).map(o => ({ props: { value: o.id }, children: [o.label] }));
 const labelOf = (option) => textOf(option.children);
 const copyT = () => localeStub.bind(copyNamespaces[0]);
 const renderSettings = () => {
@@ -277,15 +278,15 @@ const renderSettings = () => {
 };
 const renderRow = () => renderSettings().children.find((child) => child?.props?.['data-eye-care-section'] === 'background');
 const themeLabel = (theme) => localeStub.resolveText(theme.displayName);
-const clickPalette = (id) => selectOf(renderRow()).props.onChange({ target: { value: id } });
+const clickPalette = (id) => selectOf(renderRow()).props.onSelect(id);
 const clickOff = () => clickPalette(exportsObj.OFF_ID);
 const selectedLabel = () => {
   const row = renderRow();
-  return labelOf(optionsOf(row).find((o) => o.props.value === selectOf(row).props.value));
+  return labelOf(optionsOf(row).find((o) => o.props.value === selectOf(row).props.selectedId));
 };
 
 const tree = renderRow();
-check('background row is a labelled control', tree?.type === 'label');
+check('background row is a labelled control', tree?.type === 'div');
 check('row root uses the group class', tree?.props?.className.includes('dshEyeCare_group'), tree?.props?.className);
 const buttons = optionsOf(tree);
 check('dropdown contains every palette and the native option', buttons.length === themes.length + 1, `${buttons.length} buttons`);
@@ -296,8 +297,9 @@ const chineseOnly = (text) => CJK.test(text) && !/[A-Za-z]{3,}/.test(text);
 check('row copy is Chinese-only (no bilingual "English Name" suffix)',
   [textOf(tree.children[0]), ...labels].every(chineseOnly),
   textOf(tree.children[0]));
-check('dropdown has an accessible background label', selectOf(tree).props['aria-label'] === '背景色');
-check('dropdown controls the current background selection', selectOf(tree).props.value === exportsObj.DEFAULT_THEME);
+check('dropdown has an accessible background label', selectOf(tree).props.anchor.props['aria-label'] === '背景色');
+check('dropdown controls the current background selection', selectOf(tree).props.selectedId === exportsObj.DEFAULT_THEME);
+check('menu is portaled and anchored to the trigger width', selectOf(tree).props.portal === true && selectOf(tree).props.minWidthFromAnchor === true);
 check('native dropdown option is available', buttons.some(o => o.props.value === exportsObj.OFF_ID));
 
 // Class names and the stylesheet must agree in both directions, so a rename cannot
@@ -306,6 +308,7 @@ const rendered = new Set();
 const collectClasses = (node) => {
   if (node?.props?.className) String(node.props.className).split(/\s+/).forEach((c) => rendered.add(c));
   (node?.children ?? []).forEach(collectClasses);
+  if (node?.props?.anchor) collectClasses(node.props.anchor);
 };
 collectClasses(renderSettings());
 const defined = new Set([...css.matchAll(/\.(dshEyeCare_[A-Za-z0-9_]+)\{/g)].map((m) => m[1]));
