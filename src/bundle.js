@@ -36,6 +36,14 @@ export function readRowCss() {
     .join('');
 }
 
+function readIslandCss() {
+  const image = readFileSync(join(root, 'assets', 'island-background.png')).toString('base64');
+  const css = readFileSync(join(root, 'src', 'runtime', 'island.css'), 'utf8').replace(/\r\n/g, '\n');
+  const marker = 'url("./assets/island-background.png")';
+  if (css.split(marker).length !== 2) throw new Error('Island CSS must reference the background exactly once');
+  return css.replace(marker, () => `url("data:image/png;base64,${image}")`);
+}
+
 /**
  * @returns the generated bundle source, the themes it embeds, and the package manifest.
  */
@@ -48,7 +56,9 @@ export function render() {
   }
 
   // A function replacement keeps `$&` / `$'` sequences inside the payload literal.
-  const payload = emitPayload({ pkgName: pkg.name, themes, css: readRowCss() });
+  const payload = emitPayload({ pkgName: pkg.name, themes, css: readRowCss() }) + '\n' +
+    `var ISLAND_CSS = ${JSON.stringify(readIslandCss())};\n` +
+    `var ISLAND_TOKENS = ${JSON.stringify(JSON.parse(readFileSync(join(root, 'src', 'island-tokens.json'), 'utf8')))};`;
   const body = runtime.replace(MARKER, () => payload);
 
   const bundle = [

@@ -277,7 +277,7 @@ const labelOf = (button) => textOf(button.children);
 const copyT = () => localeStub.bind(copyNamespaces[0]);
 const renderRow = () => {
   reactStub.resetCursor();
-  return rowComponent({ t: copyT() });
+  return rowComponent({ t: copyT() }).children.find((child) => child?.props?.['data-eye-care-section'] === 'background');
 };
 const cubeFor = (predicate) => {
   const button = buttonsOf(renderRow()).find(predicate);

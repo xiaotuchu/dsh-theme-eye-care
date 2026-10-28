@@ -6,3 +6,4 @@ _install-backup/
 .DS_Store
 Thumbs.db
 REFACTOR.md
+artifacts/

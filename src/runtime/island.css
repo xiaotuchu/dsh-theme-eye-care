@@ -1,0 +1,299 @@
+/* Island appearance extracted from dsh-old. Animal Island UI artwork and adapted styling: CC BY-NC 4.0; see THIRD_PARTY_NOTICES.md. */
+body[data-eye-care-theme="island"] {
+  --eye-island-cream:var(--dsw-alias-bg-base);
+  --eye-island-brown:#70482f;
+  --eye-island-sidebar-row-height:42px;
+  --eye-island-sidebar-row-radius:9px;
+  --eye-island-sidebar-font-size:15px;
+  --eye-island-sidebar-selected-bg:rgba(202,225,205,.65);
+  --eye-island-sidebar-selected-accent:#16856a;
+}
+/* Two crops of the same unmodified image: a shallow canopy and bottom scenery.
+   Both use viewport coordinates so sidebar resizing never shifts the artwork. */
+body[data-eye-care-theme="island"] {
+  isolation:isolate;
+  background-color:var(--eye-island-cream);
+}
+body[data-eye-care-theme="island"]::before,body[data-eye-care-theme="island"]::after {
+  content:"";
+  position:fixed;
+  z-index:-1;
+  pointer-events:none;
+  background-image:url("./assets/island-background.png");
+  background-repeat:no-repeat;
+}
+body[data-eye-care-theme="island"]::before {
+  inset:0;
+  background-position:center bottom;
+  background-size:100vw 100vh;
+  mask-image:linear-gradient(transparent 0 22%,#000 32%);
+}
+body[data-eye-care-theme="island"]::after {
+  inset:0 0 auto 0;
+  height:88px;
+  background-size:auto 470px;
+  background-position:right top;
+  opacity:.68;
+}
+
+/* Only layout surfaces become transparent; menus and dialogs stay opaque. */
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) #root,
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_frame"]:has(> [data-side="sidebar"]),
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-phase]:has([data-conversation-scroll]) {
+  background:transparent!important;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_sidebarCol"] {
+  background:rgba(224,216,188,.22);
+  border-right:1px solid rgba(196,184,158,.45);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="sidebar"] [class*="_brand"] {
+  color:var(--eye-island-brown);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="sidebar"] button[class*="_newSession"] {
+  height:46px;
+  margin-bottom:18px;
+  border:1px solid rgba(112,143,91,.23);
+  border-radius:14px;
+  background:rgba(180,201,157,.5);
+  color:#246e52;
+  font-size:16px;
+  font-weight:600;
+  box-shadow:0 2px 3px rgba(99,91,60,.04);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="sidebar"] [class*="_sessionRow"] {
+  min-height:var(--eye-island-sidebar-row-height);
+  border-radius:var(--eye-island-sidebar-row-radius);
+}
+body[data-eye-care-theme="island"] [data-slot="sidebar"] [class*="_projectRow"] {
+  min-height:var(--eye-island-sidebar-row-height);
+}
+body[data-eye-care-theme="island"] [data-slot="sidebar"] :is([class*="_sessionTitle"],[class*="_projectName"]) {
+  font-size:var(--eye-island-sidebar-font-size);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="sidebar"] [class*="_sessionRow"][class*="_selected"] {
+  background:var(--eye-island-sidebar-selected-bg);
+  box-shadow:inset 3px 0 var(--eye-island-sidebar-selected-accent);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="sidebar"] [class*="_footArea"] {
+  border-radius:16px;
+  background:rgba(255,250,239,.88);
+}
+/* The native settings row has vertical margins and negative side margins.
+   Keep its button size, but fit the row inside the compact footer background. */
+body[data-eye-care-theme="island"] [data-slot="sidebar.settings"] > [class*="_triggerRow"] {
+  margin:0 6px;
+  width:calc(100% - 12px);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-phase] > [class*="_header"] {
+  background:rgba(251,247,237,.28);
+  border-bottom:1px solid rgba(171,151,113,.25);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-phase] [role="tab"][aria-selected="true"] {
+  color:#16856a;
+  border-bottom-color:#16856a;
+  font-weight:700;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-phase] [role="tab"][aria-selected="true"]::after {
+  background:#16856a;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_composerSeat"] {
+  background:transparent!important;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_card"]:has([contenteditable]) {
+  border:1px solid rgba(196,160,105,.28);
+  border-radius:26px;
+  box-shadow:0 5px 22px rgba(117,90,47,.1);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_card"]:has([contenteditable]) [class*="_primary"] {
+  width:42px;
+  height:42px;
+  border:1px solid #357c4e;
+  background:#4a9360;
+  color:#fffdf2;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_card"]:has([contenteditable]) [class*="_select"],
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_card"]:has([contenteditable]) [class*="_trigger"] {
+  background:rgba(244,231,206,.5);
+  border:1px solid rgba(196,160,105,.16);
+  border-radius:22px;
+  color:var(--eye-island-brown);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_markdown_"] {
+  color:#383b33;
+  font-family:inherit;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_markdown_"] :is(h1,h2,h3) {
+  color:var(--eye-island-brown);
+  font-weight:750;
+}
+/* Small leaf silhouettes, not replacement text or interactive controls. */
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_markdown_"] :is(h1,h2,h3)::before {
+  content:"";
+  display:inline-block;
+  width:.66em;
+  height:.85em;
+  margin-right:.5em;
+  border:1.5px solid #2e7852;
+  border-radius:80% 12% 75% 20%;
+  background:linear-gradient(130deg,transparent 46%,#3b8656 47% 53%,transparent 54%),#95b878;
+  transform:rotate(22deg);
+  vertical-align:-.05em;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_markdown_"] :not(pre) > code {
+  padding:2px 7px;
+  border:1px solid rgba(131,159,114,.2);
+  border-radius:10px;
+  background:rgba(225,235,216,.65);
+  color:#394e3c;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_markdown_"] pre {
+  border:0;
+  border-radius:0;
+  background:transparent;
+  font-size:14px;
+  line-height:1.7;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) .md-code-block {
+  overflow:hidden;
+  border:1px solid rgba(171,151,113,.24);
+  border-radius:14px;
+  background:rgba(246,240,227,.86);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) .md-code-block [class*="_banner"] {
+  background:rgba(225,216,196,.28);
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) .md-code-block [class*="_bannerWrap"]::before {
+  content:"";
+  position:absolute;
+  top:13px;
+  left:15px;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#dc9876;
+  box-shadow:17px 0 #e5c370,34px 0 #88ae77;
+  pointer-events:none;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) .md-code-block [class*="_bannerWrap"] {
+  position:relative;
+  padding-left:68px;
+}
+
+/* Settings-specific tokens also reach its custom controls, without recoloring
+   other dialogs or changing any setting values. Portal menus keep the shared
+   native hover tokens defined above. */
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [role="dialog"]:has([data-slot="settings.header"]) {
+  --dsw-specific-sidebar-nav-item-active:#dce9d9;
+  --dsw-alias-bg-module-platform:#f2ecdf;
+  --dsw-alias-border-l4:rgba(171,151,113,.3);
+  --dsw-alias-bg-layer-3:#fffbf3;
+  --dsw-alias-state-business-primary:#487d52;
+  --dsw-alias-state-success-primary:#487d52;
+  --dsw-elevation-stroke-color:rgba(171,151,113,.3);
+  accent-color:#487d52;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [role="dialog"]:has([data-slot="settings.header"]) [class*="_navCell"]:hover {
+  background:#edf0e1;
+  color:#376246;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [role="dialog"]:has([data-slot="settings.header"]) [class*="_navCell"][aria-current="true"] {
+  background:#dce9d9;
+  color:#2e6548;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [role="dialog"]:has([data-slot="settings.header"]) [class*="_themeCube"]:hover {
+  background:#edf0e1;
+  border-color:#a7b99a;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [role="dialog"]:has([data-slot="settings.header"]) [class*="_themeCube"][aria-pressed="true"] {
+  background:#dce9d9;
+  border-color:#83a482;
+  color:#2e6548;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [role="dialog"]:has([data-slot="settings.header"]) button[aria-haspopup="menu"]:is(:hover,[aria-expanded="true"]) {
+  background:#e6ebdb;
+  color:#376246;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [role="dialog"]:has([data-slot="settings.header"]) :is(button,input,[role="spinbutton"]):focus-visible {
+  outline:2px solid #487d52;
+  outline-offset:2px;
+}
+/* Native menus are portaled outside the dialog. Scope their palette to an
+   open settings dialog so unrelated context menus are unchanged. */
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]):has([role="dialog"] [data-slot="settings.header"]) [role="menu"] {
+  background:#fff9ed;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]):has([role="dialog"] [data-slot="settings.header"]) [role="menuitem"]:not([aria-disabled="true"]):hover {
+  background:#edf0e1;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]):has([role="dialog"] [data-slot="settings.header"]) [role="menuitem"][class*="_selected_"] {
+  background:#dce9d9;
+  color:#2e6548;
+}
+
+/* Plugin and preset panels use different cards from General Settings.
+   Match their observed component suffixes under the settings slot only. */
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] [role="tab"][data-active="true"] {
+  color:#2e6548;
+  font-weight:600;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] [role="tab"][data-active="true"]::after {
+  background:#487d52;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] [role="tab"]:not([data-active="true"]):hover {
+  color:#487d52;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] :is(
+  [class*="_card"]:has(> button[class*="_cardMain"]),
+  [class*="_card"]:has(> button[class*="_header"]),
+  [class*="_setCard"]:has(> button[class*="_setHeader"])
+) {
+  background:#fffbf3;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] :is(
+  [class*="_card"]:has(> button[class*="_cardMain"]),
+  [class*="_card"]:has(> button[class*="_header"]),
+  [class*="_setCard"]:has(> button[class*="_setHeader"])
+):not([class*="_cardBroken"]):hover {
+  background:#edf0e1;
+  border-color:#a7b99a;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] :is(
+  [class*="_card"]:has(> button[class*="_cardMain"][aria-pressed="true"]),
+  [class*="_cardOpen"], [class*="_setCardOpen"]
+):not([class*="_cardBroken"]) {
+  background:#dce9d9;
+  border-color:#83a482;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] [class*="_cardMain"][aria-pressed="true"] [class*="_cardName"] {
+  color:#2e6548;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] [class*="_cardHead"] [data-tone="solid"] {
+  background:#487d52;
+  color:#fffbf3;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] :is([class*="_creatorButton"],[class*="_cardFoot"]) {
+  background:#f5f0e4;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] [class*="_cardFoot"] {
+  border-bottom-left-radius:inherit;
+  border-bottom-right-radius:inherit;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] [class*="_iconButton"]:not([class*="_iconDanger"]):hover:not(:disabled) {
+  background:#dce9d9;
+  color:#2e6548;
+}
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [data-slot="settings.section"] [class*="_save"]:not(:disabled) {
+  background:#487d52;
+  color:#fffbf3;
+}
+
+
+/* Transparent native surfaces reveal artwork without changing geometry. */
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_frame"]:has(> [class*="_centerCol"]),
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) [class*="_frame"] > [class*="_centerCol"],
+body[data-eye-care-theme="island"]:not([data-ds-dark-theme]) :is([data-sidebar-right-panel],[data-dockkit-pane]) {
+  background:transparent!important;
+}
+body[data-eye-care-theme="island"][data-ds-dark-theme] { --eye-island-brown:#dfc5a3; }
+body[data-eye-care-theme="island"][data-ds-dark-theme]::before,
+body[data-eye-care-theme="island"][data-ds-dark-theme]::after { display:none }

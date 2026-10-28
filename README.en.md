@@ -2,14 +2,14 @@
 
 [中文](README.md) ｜ **English**
 
-> Three low-glare colour schemes that repaint the **DeepSeek Harness** UI — Warm Paper, Sage Green and Warm Grey.
-> Switch between them in **Settings → General**; the choice applies instantly and is remembered.
+> Three background palettes for the native **DeepSeek Harness** theme, plus a complete Island theme extracted from the old workbench.
+> Choose the theme and native background separately in **Settings → General**; changes apply instantly and are remembered.
 
 ![The three palettes](preview-en.png)
 
 That image is the real thing — the colours are the ones the themes actually use.
 
-## The three palettes
+## The three native background palettes
 
 | Theme | Base | Raised | Accent | Character |
 | --- | --- | --- | --- | --- |
@@ -51,8 +51,10 @@ dsh plugin --profile web add "C:\path\to\dsh-theme-eye-care"
 ## Switching
 
 - **Where**: Settings → General, right after the built-in Appearance and Font size rows.
-- **Four options**: Warm Paper, Sage Green, Warm Grey, plus **Native**. Choosing Native drops
-  this plugin's tint and hands the UI back to your own light/dark theme.
+- **Theme**: Native theme / Island. Island includes cream and green colours, local island artwork, leaf headings and component decorations, without the old workbench's navigation or business features.
+- **Background**: shown only under Native theme. Choose Warm Paper, Sage Green, Warm Grey or Native (no palette override).
+- **Separate preferences**: Island never overwrites the saved background. Switching back restores it; existing users keep their palette when upgrading.
+- **Dark mode**: still follows DSH Appearance. Island hides the light artwork and light decorations and uses a dark palette.
 - **Look**: cube buttons, the same visual rules as the built-in Appearance row — only laid out
   at equal width so all four fit on one line.
 - **Instant**: one click and it is applied; no restart, no refresh.
@@ -92,11 +94,11 @@ back immediately.
 - Your choice is stored in browser local storage, **keyed by origin (host + port)**: the desktop
   build pins its port, so it survives restarts; opening the web profile on a different port counts
   as a new origin and falls back to the default palette.
-- Only colours that already exist in DSH are overridden — no new variables are invented. If a
-  future DSH release introduces new colour variables, those places keep the official palette.
-  This plugin is built and tested against DSH `0.2.0-rc.2`.
+- Native backgrounds use DSH colour tokens. Island also adapts native component style markers and may need updates when DSH changes its component structure.
+- The contrast table above covers the three native background palettes, not all content over Island artwork.
 
 ## License
 
 MIT © 2026 Xiaotu — see [LICENSE](LICENSE).
+Island artwork and adapted appearance come from [Animal Island UI](https://github.com/guokaigdg/animal-island-ui) and retain **CC BY-NC 4.0**. See [third-party notices](THIRD_PARTY_NOTICES.md).
 Repository: <https://github.com/xiaotuchu/dsh-theme-eye-care>

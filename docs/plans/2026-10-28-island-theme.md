@@ -15,3 +15,10 @@
 3. Run `node src/build.js`, then `node test/run.js` and `node src/build.js --check`. Adapt existing test harness to inspect the background subsection and keep its old assertions. Add scoped-style/package checks for the extracted appearance and artwork.
 4. Exercise the real bundle in a browser fixture: native palette -> Island -> native, settings visibility, dark mode, artwork loading and layout bounds. Record live-host verification limits.
 5. Update Chinese/English README settings instructions and third-party notices. Verify package contents and review the final diff. Do not publish a new npm version as part of this local integration.
+
+## Validation result
+
+- Five Node suites pass: deterministic build, existing host contract, Island state transitions, scoped styles/token registry/attribution, and the three existing palette contrast suites.
+- Real generated bundle exercised with React 18 in a headless Edge fixture: image decode, theme selection, hidden/restored background controls, persisted reload, dark mode, unchanged layout bounds, narrow viewport and teardown pass.
+- npm packaging includes the client bundle and third-party notices/license. No external runtime dependency or image endpoint was introduced.
+- Desktop currently depends on npm version 2.1.0. This checkout has not replaced that installation or been published; live DSH visual integration remains unverified.

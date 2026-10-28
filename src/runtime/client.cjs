@@ -1,9 +1,8 @@
 /* @__PAYLOAD__ */
 
-// Client half of the Eye-care palettes plugin: stack ONE alias-token override layer
-// for the selected palette on top of whatever theme is active (the user's light/dark
-// preference is never touched), and contribute the palette switcher to
-// Settings -> General.
+// Stack one token layer for the selected native background or Island theme.
+// The theme and remembered native background have independent settings;
+// the user's light/dark preference is never touched.
 //
 // Build target: this file is the factory body of the ModuleLoader bundle; the build
 // (src/bundle.js) substitutes the payload marker above and wraps everything in
@@ -14,6 +13,9 @@ const react = require("react");
 const OFF_ID = "dsh-default";
 const DEFAULT_ID = "warm-paper";
 const STORAGE_KEY = "dsh-theme-eye-care:palette";
+const THEME_STORAGE_KEY = "dsh-theme-eye-care:theme";
+const NATIVE_THEME = "native";
+const ISLAND_THEME = "island";
 
 /** Locale namespace owning this row's copy; the slot descriptor binds it. */
 const LOCALE_NS = "settings.eye-care";
@@ -23,8 +25,8 @@ const LOCALE_NS = "settings.eye-care";
  * fallback chain that bottoms out at FALLBACK_LOCALE = "en".
  */
 const MESSAGES = {
-  zh: { title: "背景色", native: "原生" },
-  en: { title: "Background", native: "Native" }
+  zh: { title: "背景色", native: "原生", theme: "主题", nativeTheme: "原生主题", island: "岛屿" },
+  en: { title: "Background", native: "Native", theme: "Theme", nativeTheme: "Native theme", island: "Island" }
 };
 
 // ---------------------------------------------------------------- payload
@@ -61,19 +63,22 @@ const THEMES = PALETTES.map((palette, i) => ({
 // bundle CSS: `claimStyles` tags/claims any style tag present when the factory
 // returns, and `removeOwnedStyles` removes `style[data-plugin=<package>]` with the
 // entry. So apply() needs no install/remove bookkeeping of its own.
-const STYLE_KEY = SOURCE + "/row.css";
-if (typeof document !== "undefined" &&
-    document.querySelector("style[data-plugin-css=" + JSON.stringify(STYLE_KEY) + "]") === null) {
-  const tag = document.createElement("style");
-  tag.dataset.plugin = SOURCE;
-  tag.dataset.pluginCss = STYLE_KEY;
-  tag.textContent = ROW_CSS;
-  document.head.appendChild(tag);
+for (const [file, content] of [["row.css", ROW_CSS], ["island.css", ISLAND_CSS]]) {
+  const styleKey = SOURCE + "/" + file;
+  if (typeof document !== "undefined" &&
+      document.querySelector("style[data-plugin-css=" + JSON.stringify(styleKey) + "]") === null) {
+    const tag = document.createElement("style");
+    tag.dataset.plugin = SOURCE;
+    tag.dataset.pluginCss = styleKey;
+    tag.textContent = content;
+    document.head.appendChild(tag);
+  }
 }
 
 // ---------------------------------------------------------------- state
 const listeners = new Set();
 let selection = FALLBACK_ID;   // the visible choice
+let skinSelection = NATIVE_THEME;
 let applied = null;            // the id currently stacked on the host, null = none
 let disposeLayer = null;       // disposer of the live layer
 let themeService = null;
@@ -103,6 +108,34 @@ function writeStored(id) {
   }
 }
 
+function readSkin() {
+  try {
+    return window.localStorage.getItem(THEME_STORAGE_KEY) === ISLAND_THEME ? ISLAND_THEME : NATIVE_THEME;
+  } catch {
+    return NATIVE_THEME;
+  }
+}
+
+function reconcile() {
+  if (themeService === null) return;
+  if (skinSelection === ISLAND_THEME) document.body?.setAttribute("data-eye-care-theme", ISLAND_THEME);
+  else document.body?.removeAttribute("data-eye-care-theme");
+  const effective = skinSelection === ISLAND_THEME ? ISLAND_THEME : selection;
+  if (effective !== applied) push(effective);
+}
+
+function chooseSkin(id) {
+  if (id !== NATIVE_THEME && id !== ISLAND_THEME) return;
+  try {
+    window.localStorage.setItem(THEME_STORAGE_KEY, id);
+  } catch (error) {
+    console.warn(SOURCE + ": could not persist the theme choice", error);
+  }
+  skinSelection = id;
+  reconcile();
+  announce();
+}
+
 // ---------------------------------------------------------------- layer
 /**
  * The host keys override layers by `source`: stacking a new layer for the same
@@ -113,6 +146,11 @@ function writeStored(id) {
  * Only "DSH default" and teardown really dispose.
  */
 function push(id) {
+  if (id === ISLAND_THEME) {
+    disposeLayer = themeService.overrideTokens(SOURCE, ISLAND_TOKENS);
+    applied = id;
+    return;
+  }
   const at = AT.get(id);
   if (at === undefined) {
     if (disposeLayer !== null) {
@@ -130,7 +168,7 @@ function push(id) {
 /** Point the visible selection at `id` and reconcile the host layer. Idempotent. */
 function select(id) {
   selection = id;
-  if (themeService !== null && id !== applied) push(id);
+  reconcile();
 }
 
 function choose(id) {
@@ -140,7 +178,8 @@ function choose(id) {
 }
 
 const onStorage = (event) => {
-  if (event.key !== null && event.key !== STORAGE_KEY) return;
+  if (event.key !== null && event.key !== STORAGE_KEY && event.key !== THEME_STORAGE_KEY) return;
+  skinSelection = readSkin();
   select(readStored());
   announce();
 };
@@ -173,25 +212,29 @@ function h(type, props) {
  * translator per language revision, and that new identity is what re-renders this row
  * (palette labels included) when the user switches Settings -> General -> Language.
  */
-function PaletteRow(props) {
+function AppearanceSettings(props) {
   const t = props?.t ?? ((key) => MESSAGES.zh[key] ?? key);
   const [selected, setSelected] = react.useState(readStored);
-  react.useEffect(() => subscribe(setSelected), []);
+  const [skin, setSkin] = react.useState(readSkin);
+  react.useEffect(() => subscribe(() => {
+    setSelected(selection);
+    setSkin(skinSelection);
+  }), []);
 
   const options = THEMES.map((theme) => ({ id: theme.id, label: labelOf(theme.displayName), swatch: theme.swatch }));
   options.push({ id: OFF_ID, label: t("native"), swatch: null });
 
-  return h("div", { className: css.group },
-    h("div", { className: css.title }, t("title")),
+  const section = (title, choices, active, chooseOption, sectionId) => h("div", { className: css.group, "data-eye-care-section": sectionId },
+    h("div", { className: css.title }, title),
     h("div", { className: css.cubeRow },
-      options.map((option) => {
-        const on = option.id === selected;
+      choices.map((option) => {
+        const on = option.id === active;
         return h("button", {
           key: option.id,
           type: "button",
           className: on ? css.cube + " " + css.selected : css.cube,
           "aria-pressed": on ? "true" : "false",
-          onClick: () => choose(option.id)
+          onClick: () => chooseOption(option.id)
         },
           h("span", {
             "aria-hidden": "true",
@@ -200,6 +243,12 @@ function PaletteRow(props) {
           }),
           h("span", null, option.label));
       })));
+  return h("div", null,
+    section(t("theme"), [
+      { id: NATIVE_THEME, label: t("nativeTheme"), swatch: null },
+      { id: ISLAND_THEME, label: t("island"), swatch: "linear-gradient(135deg,#fbf7ed 50%,#16856a 50%)" }
+    ], skin, chooseSkin, "theme"),
+    skin === NATIVE_THEME ? section(t("title"), options, selected, choose, "background") : null);
 }
 
 // ---------------------------------------------------------------- plugin
@@ -216,11 +265,13 @@ function apply(ctx) {
 
   ctx.effect(() => {
     const disposeCopy = localeService.register(LOCALE_NS, MESSAGES);
+    skinSelection = readSkin();
     select(readStored());
     // Another window may switch the palette; localStorage is per origin.
     window.addEventListener("storage", onStorage);
     return () => {
       window.removeEventListener("storage", onStorage);
+      document.body?.removeAttribute("data-eye-care-theme");
       if (disposeLayer !== null) {
         disposeLayer();
         disposeLayer = null;
@@ -235,12 +286,13 @@ function apply(ctx) {
   ctx.slots.inject("settings.general.item", () =>
     ctx.slots.register(
       { name: "settings.general.item", id: "eye-care-palette", order: 12, locale: LOCALE_NS },
-      PaletteRow
+      AppearanceSettings
     ));
 }
 
 exports.THEMES = THEMES;
 exports.STORAGE_KEY = STORAGE_KEY;
+exports.THEME_STORAGE_KEY = THEME_STORAGE_KEY;
 exports.OFF_ID = OFF_ID;
 exports.DEFAULT_THEME = FALLBACK_ID;
 exports.apply = apply;

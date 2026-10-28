@@ -36,7 +36,9 @@ check('the artifact ends with exactly one newline', artifact.endsWith('\n') && !
 // The artifact is one fixed runtime + one shared name table + ~4.5 KB of value
 // vectors per palette, so the budget has to scale with the catalogue: a flat 28 KB
 // would fail the documented "copy a theme file and rebuild" workflow on palette #4.
-const budget = 16 * 1024 + themes.length * 5 * 1024;
+// The artwork is deliberately embedded once for desktop/web asset portability.
+const artworkBytes = 4 * Math.ceil(readFileSync(join(root, 'assets', 'island-background.png')).length / 3);
+const budget = 48 * 1024 + themes.length * 5 * 1024 + artworkBytes;
 const size = Buffer.byteLength(artifact);
 check(`the artifact stays inside its size budget (${Math.round(budget / 1024)} KB for ${themes.length} palettes)`,
   size <= budget, `${size} bytes`);
@@ -45,6 +47,8 @@ check(`the artifact stays inside its size budget (${Math.round(budget / 1024)} K
 // emitted per palette the artifact would grow without the size guard noticing.
 check('the shared token-name table is emitted exactly once',
   artifact.split('var TOKEN_NAMES').length === 2);
+check('the local island artwork is embedded exactly once',
+  artifact.split('data:image/png;base64,').length === 2);
 
 check('the artifact embeds every palette', themes.every((t) => artifact.includes(`id: ${JSON.stringify(t.id)}`)));
 

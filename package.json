@@ -1,8 +1,8 @@
 {
   "name": "@xiaotuchu/dsh-theme-eye-care",
   "version": "2.1.0",
-  "description": "护眼配色 Eye-care palettes — three switchable low-glare themes (warm paper, eye green, warm grey) for the DeepSeek Harness web GUI, each a full alias-token layer with a light and a dark face.",
-  "license": "MIT",
+  "description": "DSH native background palettes and a standalone Island theme, with remembered settings and light/dark support.",
+  "license": "MIT AND CC-BY-NC-4.0",
   "author": "Xiaotu",
   "type": "module",
   "engines": {
@@ -22,6 +22,8 @@
     "README.md",
     "README.en.md",
     "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "assets/licenses",
     "preview.png",
     "preview-en.png"
   ],
