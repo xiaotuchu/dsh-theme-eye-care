@@ -267,36 +267,28 @@ function textOf(node) {
   if (node.children) return textOf(node.children);
   return '';
 }
-const buttonsOf = (tree) =>
-  tree.children
-    .filter((c) => c?.type === 'div')
-    .flatMap((c) => c.children)
-    .filter((c) => c?.type === 'button');
-const labelOf = (button) => textOf(button.children);
-/** The renderer hands the row a translator bound to the descriptor's namespace. */
+const selectOf = (tree) => tree.children.find((child) => child?.type === 'select');
+const optionsOf = (tree) => selectOf(tree)?.children ?? [];
+const labelOf = (option) => textOf(option.children);
 const copyT = () => localeStub.bind(copyNamespaces[0]);
-const renderRow = () => {
+const renderSettings = () => {
   reactStub.resetCursor();
-  return rowComponent({ t: copyT() }).children.find((child) => child?.props?.['data-eye-care-section'] === 'background');
+  return rowComponent({ t: copyT() });
 };
-const cubeFor = (predicate) => {
-  const button = buttonsOf(renderRow()).find(predicate);
-  if (button === undefined) throw new Error('no cube matches the requested option');
-  return button;
-};
-/** The "no palette" cube is identified by its dashed swatch, not by its label. */
-const isOffCube = (b) => b.children[0]?.props?.className?.includes('dshEyeCare_swatchNone') === true;
+const renderRow = () => renderSettings().children.find((child) => child?.props?.['data-eye-care-section'] === 'background');
 const themeLabel = (theme) => localeStub.resolveText(theme.displayName);
-const clickPalette = (id) => cubeFor((b) => labelOf(b) === themeLabel(themes.find((t) => t.id === id))).props.onClick();
-const clickOff = () => cubeFor(isOffCube).props.onClick();
-const selectedLabel = () =>
-  labelOf(buttonsOf(renderRow()).find((b) => b.props.className.includes('dshEyeCare_selected')));
+const clickPalette = (id) => selectOf(renderRow()).props.onChange({ target: { value: id } });
+const clickOff = () => clickPalette(exportsObj.OFF_ID);
+const selectedLabel = () => {
+  const row = renderRow();
+  return labelOf(optionsOf(row).find((o) => o.props.value === selectOf(row).props.value));
+};
 
 const tree = renderRow();
-check('row renders a div root', tree?.type === 'div');
-check('row root uses the group class', tree?.props?.className === 'dshEyeCare_group', tree?.props?.className);
-const buttons = buttonsOf(tree);
-check('row renders one button per palette plus the native option', buttons.length === themes.length + 1, `${buttons.length} buttons`);
+check('background row is a labelled control', tree?.type === 'label');
+check('row root uses the group class', tree?.props?.className.includes('dshEyeCare_group'), tree?.props?.className);
+const buttons = optionsOf(tree);
+check('dropdown contains every palette and the native option', buttons.length === themes.length + 1, `${buttons.length} buttons`);
 const labels = buttons.map(labelOf);
 check('row labels every palette by displayName', themes.every((t) => labels.includes(themeLabel(t))), labels.join(' | '));
 const CJK = /[\u4e00-\u9fff]/;
@@ -304,14 +296,9 @@ const chineseOnly = (text) => CJK.test(text) && !/[A-Za-z]{3,}/.test(text);
 check('row copy is Chinese-only (no bilingual "English Name" suffix)',
   [textOf(tree.children[0]), ...labels].every(chineseOnly),
   textOf(tree.children[0]));
-check('every option is a cube', buttons.every((b) => typeof b.props.className === 'string' && b.props.className.startsWith('dshEyeCare_cube')),
-  buttons.map((b) => b.props.className).join(' | '));
-check('every cube reports its pressed state', buttons.every((b) => b.props['aria-pressed'] === 'true' || b.props['aria-pressed'] === 'false'));
-check('exactly one cube is selected', buttons.filter((b) => b.props.className.includes('dshEyeCare_selected')).length === 1);
-const offButton = buttons.find(isOffCube);
-check('the native option shows a dashed (no-palette) swatch',
-  offButton?.children[0]?.props?.className?.includes('dshEyeCare_swatchNone') === true);
-check('the decorative swatch is hidden from assistive tech', buttons.every((b) => b.children[0]?.props?.['aria-hidden'] === 'true'));
+check('dropdown has an accessible background label', selectOf(tree).props['aria-label'] === '背景色');
+check('dropdown controls the current background selection', selectOf(tree).props.value === exportsObj.DEFAULT_THEME);
+check('native dropdown option is available', buttons.some(o => o.props.value === exportsObj.OFF_ID));
 
 // Class names and the stylesheet must agree in both directions, so a rename cannot
 // leave a rule orphaned or a rendered class unstyled.
@@ -320,7 +307,7 @@ const collectClasses = (node) => {
   if (node?.props?.className) String(node.props.className).split(/\s+/).forEach((c) => rendered.add(c));
   (node?.children ?? []).forEach(collectClasses);
 };
-collectClasses(tree);
+collectClasses(renderSettings());
 const defined = new Set([...css.matchAll(/\.(dshEyeCare_[A-Za-z0-9_]+)\{/g)].map((m) => m[1]));
 check('every rendered class is defined in the stylesheet',
   [...rendered].every((c) => defined.has(c)),
@@ -336,7 +323,7 @@ check('the row copy starts in Chinese', textOf(tree.children[0]) === '背景色'
 
 setLocale('en');
 const enTree = renderRow();
-const enLabels = buttonsOf(enTree).map(labelOf);
+const enLabels = optionsOf(enTree).map(labelOf);
 check('switching language switches the row copy', textOf(enTree.children[0]) === 'Background', textOf(enTree.children[0]));
 check('switching language switches the palette labels against the same theme files',
   themes.every((t) => enLabels.includes(t.displayName.en)), enLabels.join(' | '));

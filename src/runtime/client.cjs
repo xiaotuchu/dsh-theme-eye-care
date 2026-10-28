@@ -193,7 +193,9 @@ const css = {
   cube: "dshEyeCare_cube",
   selected: "dshEyeCare_selected",
   swatch: "dshEyeCare_swatch",
-  swatchNone: "dshEyeCare_swatchNone"
+  swatchNone: "dshEyeCare_swatchNone",
+  background: "dshEyeCare_background",
+  select: "dshEyeCare_select"
 };
 /** Resolve package text (a plain string, or a { locale: label } map) through the active language. */
 function labelOf(text) {
@@ -248,7 +250,14 @@ function AppearanceSettings(props) {
       { id: NATIVE_THEME, label: t("nativeTheme"), swatch: null },
       { id: ISLAND_THEME, label: t("island"), swatch: "linear-gradient(135deg,#fbf7ed 50%,#16856a 50%)" }
     ], skin, chooseSkin, "theme"),
-    skin === NATIVE_THEME ? section(t("title"), options, selected, choose, "background") : null);
+    skin === NATIVE_THEME ? h("label", { className: css.group + " " + css.background, "data-eye-care-section": "background" },
+      h("span", { className: css.title }, t("title")),
+      h("select", {
+        className: css.select,
+        "aria-label": t("title"),
+        value: selected,
+        onChange: (event) => choose(event.target.value)
+      }, options.map((option) => h("option", { key: option.id, value: option.id }, option.label)))) : null);
 }
 
 // ---------------------------------------------------------------- plugin

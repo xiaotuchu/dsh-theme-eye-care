@@ -37,9 +37,10 @@ const { chromium } = await import(pathToFileURL(resolve(playwrightEntry)).href);
 const browser = await chromium.launch({ channel: 'msedge', headless: true });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
+  page.setDefaultTimeout(5000);
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   await page.goto(pathToFileURL(resolve('artifacts/island-preview.html')).href);
-  await page.getByRole('button', { name: '豆绿', exact: true }).click();
+  await page.getByRole('combobox', { name: '背景色', exact: true }).selectOption('eye-green');
   const baseline = await page.locator('.demo_centerCol').boundingBox();
   await page.screenshot({ path: 'artifacts/native-background.png' });
   await page.getByRole('button', { name: '岛屿', exact: true }).click();
@@ -59,7 +60,7 @@ try {
   assert.equal(await page.evaluate(() => getComputedStyle(document.body,'::before').display), 'none');
   await page.screenshot({ path: 'artifacts/island-dark.png' });
   await page.getByRole('button', { name: '原生主题', exact: true }).click();
-  assert.equal(await page.getByRole('button', { name: '豆绿', exact: true }).getAttribute('aria-pressed'), 'true');
+  assert.equal(await page.getByRole('combobox', { name: '背景色', exact: true }).inputValue(), 'eye-green');
   assert.equal(await page.evaluate(() => getComputedStyle(document.body,'::before').backgroundImage), 'none');
   await page.setViewportSize({ width: 720, height: 900 });
   await page.getByRole('button', { name: '岛屿', exact: true }).click();

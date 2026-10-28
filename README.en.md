@@ -55,8 +55,7 @@ dsh plugin --profile web add "C:\path\to\dsh-theme-eye-care"
 - **Background**: shown only under Native theme. Choose Warm Paper, Sage Green, Warm Grey or Native (no palette override).
 - **Separate preferences**: Island never overwrites the saved background. Switching back restores it; existing users keep their palette when upgrading.
 - **Dark mode**: still follows DSH Appearance. Island hides the light artwork and light decorations and uses a dark palette.
-- **Look**: cube buttons, the same visual rules as the built-in Appearance row — only laid out
-  at equal width so all four fit on one line.
+- **Look**: side-by-side theme buttons, with a compact background dropdown on the same line as its label.
 - **Instant**: one click and it is applied; no restart, no refresh.
 - **Remembered**: it is still your choice next time you open the app.
 - **Multi-window**: switch in one window and the others follow.
